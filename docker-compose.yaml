@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  frontend:
+    image: sermalenk/skypro-front:lesson-38
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+    networks:
+      - backend_nw
+  postgres:
+    image: postgres:13.0-alpine
+    restart: always
+    env_file:
+      - src/.env
+    volumes:
+      - pg_data_todolist:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U ${DATABASE_USER} −d ${DATABASE_DB}
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    ports:
+      - "5432:5432"
+    networks:
+      - backend_nw
+  #прописываем апи: 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - src/.env
+    environment:
+      POSTGRES_HOST: postgres
+    depends_on:
+      # старт после базы
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    networks:
+      - backend_nw
+volumes:
+  pg_data_todolist:
+networks:
+  backend_nw:
+    driver: bridge
