@@ -2,7 +2,11 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from rest_framework.exceptions import AuthenticationFailed, ValidationError, NotAuthenticated
+from rest_framework.exceptions import (
+    AuthenticationFailed,
+    NotAuthenticated,
+    ValidationError,
+)
 
 from core.models import User
 
@@ -42,23 +46,25 @@ class CreateUserSerializer(serializers.ModelSerializer):
             validated_data["password"]
         )  # шифровка пароля
         return super().create(validated_data)
-    
+
 
 class LoginSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
     password = PasswordField(required=True)
+
     class Meta:
         model = User
-        fields = ('username', 'password')
+        fields = ("username", "password")
 
     def create(self, validated_data: dict):
-        if not (user := authenticate(
-                username=validated_data['username'],
-                password=validated_data['password']
-        )):
+        if not (
+            user := authenticate(
+                username=validated_data["username"], password=validated_data["password"]
+            )
+        ):
             raise AuthenticationFailed
         return user
-    
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -77,11 +83,11 @@ class UpdatePasswordSerializer(serializers.Serializer):
         if not user.check_password(attrs["old_password"]):
             raise ValidationError({"old password": "field is incorrect"})
         return attrs
-    
+
     def create(self, validated_data: dict) -> User:
         raise NotImplementedError
-    
+
     def update(self, instance: User, validated_data: dict) -> User:
         instance.password = make_password(validated_data["new_password"])
-        instance.save(update_fields=("password", ))
+        instance.save(update_fields=("password",))
         return instance
