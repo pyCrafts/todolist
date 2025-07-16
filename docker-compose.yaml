@@ -1,7 +1,6 @@
-version: '3.9'
 services:
   frontend:
-    image: sermalenk/skypro-front:lesson-38
+    image: sermalenk/skypro-front:lesson-37
     restart: always
     depends_on:
       - api
@@ -17,7 +16,11 @@ services:
     volumes:
       - pg_data_todolist:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -U ${DATABASE_USER} −d ${DATABASE_DB}
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${DATABASE_USER} -d $${DATABASE_DB} || exit 1",
+        ]
       interval: 5s
       timeout: 3s
       retries: 3

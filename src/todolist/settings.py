@@ -77,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "todolist.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -87,7 +86,7 @@ DATABASES = {
         "NAME": env("DATABASE_DB"),  # Название вашей базы данных
         "USER": env("DATABASE_USER"),  # Имя пользователя базы данных
         "PASSWORD": env("POSTGRES_PASSWORD"),  # Пароль пользователя базы данных
-        "HOST": "postgres",  # Адрес хоста базы данных
+        "HOST": "192.168.0.117",  # Адрес хоста базы данных
         "PORT": "5432",  # Порт базы данных
     }
 }
